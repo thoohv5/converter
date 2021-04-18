@@ -20,7 +20,7 @@ func init() {
 	flag.StringVar(&tables, "tables", "file", "表的名称，多个按照逗号隔开")
 	flag.StringVar(&pkg, "pkg", "model", "结构体的package")
 	flag.StringVar(&tag, "tag", "db", "自定义tag名称")
-	flag.BoolVar(&jsonTag, "jsonTag", true, "是否jsonTag")
+	flag.BoolVar(&jsonTag, "jsonTag", false, "是否jsonTag")
 	flag.StringVar(&savePath, "path", "./model", "保存路径")
 }
 
