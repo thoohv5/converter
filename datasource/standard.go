@@ -20,6 +20,8 @@ type Column struct {
 	Default *string
 	// 字段备注
 	Comment string
+	// 原始字段类型
+	OriginalType string
 }
 
 // 表
