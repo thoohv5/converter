@@ -43,7 +43,7 @@ func (d *mysql) GetColumnList(tableName string) ([]*Column, error) {
 	defer rows.Close()
 	for rows.Next() {
 		c := new(Column)
-		if err := rows.Scan(&c.Name, &c.Type, &c.isNullAble, &c.Default, &c.Comment); nil != err {
+		if err := rows.Scan(&c.Name, &c.Type, &c.IsNullAble, &c.Default, &c.Comment); nil != err {
 			return list, fmt.Errorf("rows Scan err, err:%w", err)
 		}
 		list = append(list, c)

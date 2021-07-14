@@ -15,7 +15,7 @@ type Column struct {
 	// 字段类型
 	Type string
 	// 是否为空
-	isNullAble string
+	IsNullAble string
 	// 默认值
 	Default *string
 	// 字段备注
