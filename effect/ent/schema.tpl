@@ -30,11 +30,11 @@ func ({{.Table.Tag}}) Annotations() []schema.Annotation {
 func ({{.Table.Tag}}) Fields() []ent.Field {
 	return []ent.Field{ {{range .Columns}}
 	    {{- if eq .Type "int32" "int64"}}
-	        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default({{.Default}}){{end}}.Comment(`{{.Comment}}`),
+	        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default({{.Default}}){{else}}.Optional(){{end}}.Comment(`{{.Comment}}`),
 	    {{- else if eq .Type "time"}}
-	        field.{{.Type|camelCase}}("{{.Name}}").SchemaType(map[string]string{ dialect.MySQL:"{{.OriginalType}}",}).Comment(`{{.Comment}}`),
+	        field.{{.Type|camelCase}}("{{.Name}}").Optional().SchemaType(map[string]string{ dialect.MySQL:"{{.OriginalType}}",}).Comment(`{{.Comment}}`),
 	    {{- else}}
-	        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default("{{.Default}}"){{end}}.Comment(`{{.Comment}}`),
+	        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default("{{.Default}}"){{else}}.Optional(){{end}}.Comment(`{{.Comment}}`),
 	    {{- end -}}
 	{{- end -}}
 	}
