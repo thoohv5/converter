@@ -12,13 +12,14 @@ import (
 
 type parse struct {
 	typeToGo map[string]string
+	t        adapter.Type
 	e        effect.IEffect
 }
 
 func New(params ...interface{}) IParse {
 	t := adapter.ModelEffect
 	if len(params) > 0 {
-		t = params[0].(adapter.Type)
+		t = adapter.Type(params[0].(int))
 	}
 	return &parse{
 		typeToGo: map[string]string{
@@ -58,6 +59,7 @@ func New(params ...interface{}) IParse {
 			"binary":             "string",
 			"varbinary":          "string",
 		},
+		t: t,
 		e: adapter.GetAdapter(t),
 	}
 }
@@ -112,12 +114,19 @@ func (p *parse) Model(param *Param) error {
 		// 数据处理
 		columns := make([]*effect.Column, 0)
 		for _, column := range columnList {
+
+			cType := p.Transform(column.Type)
+			if p.t == adapter.SchemaEffect && cType == "time.Time" {
+				cType = "time"
+			}
+
 			columns = append(columns, &effect.Column{
 				Column: &datasource.Column{
-					Name:    column.Name,
-					Type:    p.Transform(column.Type),
-					Default: column.Default,
-					Comment: column.Comment,
+					Name:         column.Name,
+					Type:         cType,
+					OriginalType: column.Type,
+					Default:      column.Default,
+					Comment:      column.Comment,
 				},
 				Tag: p.MakeTag(tag, column.Name, jsonTag),
 			})
@@ -141,90 +150,6 @@ func (p *parse) Model(param *Param) error {
 		// 模版渲染
 		if err := p.e.Assembly(f, &effect.Model{
 			Package: pkg,
-			Table: &effect.Table{
-				Table: tableInfo,
-				Tag:   utils.CamelCase(tableInfo.Name),
-			},
-			Columns: columns,
-		}); nil != err {
-			return err
-		}
-
-		// // 格式化
-		// cmd := exec.Command("gofmt", "-w", filePath)
-		// if err := cmd.Run(); nil != err {
-		// 	return err
-		// }
-	}
-	return nil
-}
-
-func (p *parse) Schema(param *Param) error {
-
-	dsn := param.Dsn
-	tables := param.Tables
-	savePath := param.SavePath
-
-	svr, err := datasource.New(dsn)
-	if nil != err {
-		return err
-	}
-
-	// 保存文件
-	if err := os.MkdirAll(savePath, os.ModePerm); nil != err {
-		return fmt.Errorf("os Mkdir err, err:%w", err)
-	}
-
-	for _, table := range tables {
-		// 表信息
-		tableInfo, err := svr.GetTableInfo(table)
-		if nil != err {
-			return err
-		}
-
-		// 字段列表信息
-		columnList, err := svr.GetColumnList(table)
-		if nil != err {
-			return err
-		}
-
-		// 数据处理
-		columns := make([]*effect.Column, 0)
-		for _, column := range columnList {
-
-			cType := p.Transform(column.Type)
-			if cType == "time.Time" {
-				cType = "time"
-			}
-
-			columns = append(columns, &effect.Column{
-				Column: &datasource.Column{
-					Name:         column.Name,
-					Type:         cType,
-					OriginalType: column.Type,
-					Default:      column.Default,
-					Comment:      column.Comment,
-				},
-			})
-		}
-
-		filePath := fmt.Sprintf("%s%s%s.go", savePath, string(os.PathSeparator), table)
-		f, err := os.Create(filePath)
-		if nil != err {
-			if !os.IsExist(err) {
-				return fmt.Errorf("os Create err, err:%w", err)
-			}
-			f, err = os.Open(filePath)
-			if nil != err {
-				return fmt.Errorf("os Open err, err:%w", err)
-			}
-		}
-		defer func() {
-			f.Close()
-		}()
-
-		// 模版渲染
-		if err := p.e.Assembly(f, &effect.Model{
 			Table: &effect.Table{
 				Table: tableInfo,
 				Tag:   utils.CamelCase(tableInfo.Name),

@@ -8,8 +8,6 @@ type IParse interface {
 	MakeTag(tagLabel string, columnName string, jsonTag bool) string
 	// 生成Model
 	Model(param *Param) error
-	// 生成Schema
-	Schema(param *Param) error
 }
 
 type Param struct {

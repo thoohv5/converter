@@ -15,6 +15,7 @@ var pkg string
 var tag string
 var jsonTag bool
 var savePath string
+var effect int
 
 func init() {
 	flag.StringVar(&dsn, "dsn", "root:password@tcp(127.0.0.1:3306)/med_interrogation?charset=utf8", "数据库链接DSN")
@@ -23,13 +24,14 @@ func init() {
 	flag.StringVar(&tag, "tag", "db", "自定义tag名称")
 	flag.BoolVar(&jsonTag, "jsonTag", false, "是否jsonTag")
 	flag.StringVar(&savePath, "path", "./model", "保存路径")
+	flag.IntVar(&effect, "effect", 0, "模版：0-model，1-ent，默认0")
 }
 
 func main() {
 
 	flag.Parse()
 
-	err := parse.New().Model(&parse.Param{
+	err := parse.New(effect).Model(&parse.Param{
 		Dsn:      dsn,
 		Tables:   strings.Split(tables, ","),
 		Tag:      tag,

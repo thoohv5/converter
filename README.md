@@ -14,4 +14,6 @@ Usage of
         表的名称，多个按照逗号隔开 (default "file")
   -tag string
         自定义tag名称 (default "db")
+  -effect int
+        模版：0-model，1-ent（default 0）
 ```
