@@ -40,7 +40,9 @@ func main() {
 		Pkg:      pkg,
 	})
 
-	fmt.Println(err)
-	log.Println(err)
+	if nil != err {
+		fmt.Println(err)
+		log.Println(err)
+	}
 
 }
