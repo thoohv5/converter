@@ -27,14 +27,16 @@ func ({{.Table.Tag}}) Config() ent.Config {
 // Fields of the {{.Table.Tag}}.
 func ({{.Table.Tag}}) Fields() []ent.Field {
 	return []ent.Field{ {{range .Columns}}
-	    {{- if eq .Name "id"}}
-	        field.{{.Type|camelCase}}("{{.Name}}").Comment(`{{.Comment}}`),
+	    {{- if eq .Name "label"}}
+        field.{{.Type|camelCase}}("lab"){{if .Default}}.Default({{.Default}}){{else}}.Optional(){{end}}.Comment(`{{.Comment}}`).StorageKey("{{.Name}}"),
+	    {{- else if eq .Name "id"}}
+        field.{{.Type|camelCase}}("{{.Name}}").Comment(`{{.Comment}}`),
 	    {{- else if eq .Type "int32" "int64"}}
-	        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default({{.Default}}){{else}}.Optional(){{end}}.Comment(`{{.Comment}}`),
+        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default({{.Default}}){{else}}.Optional(){{end}}.Comment(`{{.Comment}}`),
 	    {{- else if eq .Type "time"}}
-	        field.{{.Type|camelCase}}("{{.Name}}").Optional().SchemaType(map[string]string{ dialect.MySQL:"{{.OriginalType}}",}).Comment(`{{.Comment}}`),
+        field.{{.Type|camelCase}}("{{.Name}}").Optional().SchemaType(map[string]string{ dialect.MySQL:"{{.OriginalType}}",}).Comment(`{{.Comment}}`),
 	    {{- else}}
-	        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default("{{.Default}}"){{else}}.Optional(){{end}}.Comment(`{{.Comment}}`),
+        field.{{.Type|camelCase}}("{{.Name}}"){{if .Default}}.Default("{{.Default}}"){{else}}.Optional(){{end}}.Comment(`{{.Comment}}`),
 	    {{- end -}}
 	{{- end -}}
 	}
