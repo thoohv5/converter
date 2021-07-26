@@ -24,7 +24,7 @@ func init() {
 	flag.StringVar(&tag, "tag", "db", "自定义tag名称")
 	flag.BoolVar(&jsonTag, "jsonTag", false, "是否jsonTag")
 	flag.StringVar(&savePath, "path", "./model", "保存路径")
-	flag.IntVar(&effect, "effect", 0, "模版：0-model，1-ent，默认0")
+	flag.IntVar(&effect, "effect", 0, "模版：0-model，1-ent，3-md, 默认0")
 }
 
 func main() {

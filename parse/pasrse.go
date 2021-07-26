@@ -132,7 +132,12 @@ func (p *parse) Model(param *Param) error {
 			})
 		}
 
-		filePath := fmt.Sprintf("%s%s%s.go", savePath, string(os.PathSeparator), table)
+		filePath := ""
+		if p.t == adapter.MdEffect {
+			filePath = fmt.Sprintf("%s%s%s.md", savePath, string(os.PathSeparator), table)
+		} else {
+			filePath = fmt.Sprintf("%s%s%s.go", savePath, string(os.PathSeparator), table)
+		}
 		f, err := os.Create(filePath)
 		if nil != err {
 			if !os.IsExist(err) {
